@@ -2,9 +2,6 @@ plugins {
     id 'java'
 }
 
-group 'work.lclpnet'
-version '1.0.0'
-
 repositories {
     mavenCentral()
     maven {
