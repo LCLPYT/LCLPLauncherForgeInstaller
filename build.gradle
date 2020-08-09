@@ -2,13 +2,23 @@ plugins {
     id 'java'
 }
 
-group 'org.example'
-version '1.0-SNAPSHOT'
+group 'work.lclpnet'
+version '1.0.0'
 
 repositories {
     mavenCentral()
+    flatDir {
+        dirs 'libs'
+    }
 }
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
+    compileOnly name: "forge_installer"
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'work.lclpnet.launcherlogic.LauncherLogic'
+    }
 }
