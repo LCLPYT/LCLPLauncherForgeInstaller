@@ -7,7 +7,6 @@ import net.minecraftforge.installer.json.OptionalLibrary;
 import net.minecraftforge.installer.json.Util;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
