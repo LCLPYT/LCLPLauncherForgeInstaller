@@ -6,6 +6,11 @@ gradle.properties
 build
 buildRT
 
+bin
+.settings
+.project
+.classpath
+
 .iws
 workspace.xml
 tasks.xml
