@@ -8,6 +8,7 @@ import java.util.Locale;
 
 public class LoggingPrintStream extends PrintStream {
 
+	public static PrintStream origErr = null;
 	protected OutputStream loggingStream;
 	protected ProgressCallbackClient pgClient;
 
@@ -21,7 +22,7 @@ public class LoggingPrintStream extends PrintStream {
 		try {
 			loggingStream.write(new byte[] {10});
 		} catch (IOException e) {
-			e.printStackTrace();
+			if(origErr != null) e.printStackTrace(origErr);
 		}
 	}
 
@@ -29,7 +30,7 @@ public class LoggingPrintStream extends PrintStream {
 		try {
 			loggingStream.write(x.getBytes(StandardCharsets.UTF_8));
 		} catch (IOException e) {
-			e.printStackTrace();
+			if(origErr != null) e.printStackTrace(origErr);
 		}
 	}
 
@@ -81,7 +82,6 @@ public class LoggingPrintStream extends PrintStream {
 	@Override
 	public void println(String x) {
 		super.println(x);
-		writeString(x);
 		newLine();
 	}
 
@@ -94,7 +94,6 @@ public class LoggingPrintStream extends PrintStream {
 	@Override
 	public void println(boolean x) {
 		super.println(x);
-		writeBoolean(x);
 		newLine();
 	}
 
@@ -107,7 +106,6 @@ public class LoggingPrintStream extends PrintStream {
 	@Override
 	public void println(char x) {
 		super.println(x);
-		writeChar(x);
 		newLine();
 	}
 
@@ -120,7 +118,6 @@ public class LoggingPrintStream extends PrintStream {
 	@Override
 	public void println(char[] x) {
 		super.println(x);
-		writeCharArray(x);
 		newLine();
 	}
 
@@ -133,7 +130,6 @@ public class LoggingPrintStream extends PrintStream {
 	@Override
 	public void println(double x) {
 		super.println(x);
-		writeDouble(x);
 		newLine();
 	}
 	
@@ -146,7 +142,6 @@ public class LoggingPrintStream extends PrintStream {
 	@Override
 	public void println(float x) {
 		super.println(x);
-		writeFloat(x);
 		newLine();
 	}
 	
@@ -159,7 +154,6 @@ public class LoggingPrintStream extends PrintStream {
 	@Override
 	public void println(int x) {
 		super.println(x);
-		writeInt(x);
 		newLine();
 	}
 	
@@ -172,7 +166,6 @@ public class LoggingPrintStream extends PrintStream {
 	@Override
 	public void println(long x) {
 		super.println(x);
-		writeLong(x);
 		newLine();
 	}
 	
@@ -185,7 +178,6 @@ public class LoggingPrintStream extends PrintStream {
 	@Override
 	public void println(Object x) {
 		super.println(x);
-		writeObj(x);
 		newLine();
 	}
 	
