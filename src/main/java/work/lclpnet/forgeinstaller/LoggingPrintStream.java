@@ -198,7 +198,9 @@ public class LoggingPrintStream extends PrintStream {
 	@Override
 	public void write(byte[] b) throws IOException {
 		super.write(b);
-		if(pgClient != null) pgClient.send(new String(b));
+		String s = new String(b);
+		writeString(s);
+		if(pgClient != null) pgClient.send(s);
 	}
 
 }
