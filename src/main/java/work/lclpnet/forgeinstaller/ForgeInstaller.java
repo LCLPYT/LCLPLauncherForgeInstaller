@@ -7,6 +7,9 @@ import net.minecraftforge.installer.json.OptionalLibrary;
 import net.minecraftforge.installer.json.Util;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,9 +32,29 @@ public class ForgeInstaller {
         pgClient = new ProgressCallbackClient(host, port);
         pgClient.setClientName("forgeInstaller");
 
-        PrintStream origOut = System.out;
-        PrintStream interceptor = new Interceptor(origOut, pgClient);
-        System.setOut(interceptor);
+		File tempDir = new File(System.getProperty("java.io.tmpdir"), "launcherlogic_forge");
+		tempDir.mkdirs();
+		File logFile = new File(tempDir, String.format("llforgei_%s_stdout.txt", System.currentTimeMillis() / 1000L));
+		File errFile = new File(tempDir, String.format("llforgei_%s_stderr.txt", System.currentTimeMillis() / 1000L));
+		
+		String logMsg = "Writing logs to: " + tempDir.getAbsolutePath();
+		System.out.println(logMsg);
+		pgClient.send(logMsg);
+		
+		FileOutputStream outOut, outErr;
+		try {
+			outOut = new FileOutputStream(logFile);
+			outErr = new FileOutputStream(errFile);
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+			System.exit(1);
+			return;
+		}
+        
+		PrintStream origOut = System.out, origErr = System.err;
+        LoggingPrintStream interceptor = new LoggingPrintStream(origOut, outOut, pgClient);
+		System.setOut(interceptor);
+        System.setErr(new LoggingPrintStream(origErr, outErr, pgClient));
 
         ClientInstall install = new ClientInstall(Util.loadInstallProfile(), ProgressCallback.withOutputs(interceptor));
         Predicate<String> optPred = input -> {
@@ -56,6 +79,16 @@ public class ForgeInstaller {
             }
             ProgressCallbackClient.closeAllSockets();
         }
+        
+		try {
+			outOut.close();
+			outErr.close();
+			System.setOut(origOut);
+			System.setErr(origErr);
+		} catch (IOException e) {
+			e.printStackTrace(origErr);
+		}
+        
         System.exit(0);
     }
 
