@@ -10,10 +10,10 @@ import java.util.List;
 
 public class ProgressCallbackClient {
 
-    private static List<Socket> openSockets = new ArrayList<>();
+    private static final List<Socket> openSockets = new ArrayList<>();
 
-    private String host;
-    private int port;
+    private final String host;
+    private final int port;
     private transient Socket socket;
 
     public ProgressCallbackClient(String host, int port) {
@@ -48,26 +48,15 @@ public class ProgressCallbackClient {
     public void setClientName(String name) {
         JsonObject obj = new JsonObject();
         obj.addProperty("setname", name);
-        String s = obj.toString() + "\n";
+        String s = obj + "\n";
         send(s.getBytes(StandardCharsets.UTF_8));
     }
 
     public void send(String msg) {
         JsonObject obj = new JsonObject();
         obj.addProperty("forgeInstaller", msg);
-        msg = obj.toString() + "\n";
+        msg = obj + "\n";
         send(msg.getBytes(StandardCharsets.UTF_8));
-    }
-
-    public void stop() {
-        if (socket == null) return;
-        try {
-            socket.close();
-            openSockets.remove(socket);
-            socket = null;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     public static void closeAllSockets() {

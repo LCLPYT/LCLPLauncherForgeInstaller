@@ -1,18 +1,24 @@
-# Ignore Gradle project-specific cache directory
-.gradle
-gradle.properties
-
-# Ignore Gradle build output directory
-build
-buildRT
-
+# eclipse
 bin
+*.launch
 .settings
-.project
+.metadata
 .classpath
+.project
 
-.iws
-workspace.xml
-tasks.xml
+# idea
+out
+*.ipr
+*.iws
+*.iml
+.idea
 
+# gradle
+build
+.gradle
 libs
+private.properties
+repo
+
+# other
+eclipse
