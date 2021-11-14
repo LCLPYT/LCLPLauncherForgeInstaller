@@ -43,7 +43,7 @@ def getVersion(boolean strict = false) {
 }
 
 group 'work.lclpnet'
-archivesBaseName = 'launcher-logic-forge-installer'
+archivesBaseName = 'lclplauncher-forge-installer'
 version getVersion()
 
 sourceCompatibility = targetCompatibility = '16'
