@@ -84,8 +84,8 @@ publishing {
             from components.java
 
             pom {
-                name = 'LauncherLogic Forge Installer'
-                description = 'Installer for MinecraftForge for LauncherLogic'
+                name = 'LCLPLauncher Forge Installer'
+                description = 'Installer for MinecraftForge for LCLPLauncher'
             }
         }
     }

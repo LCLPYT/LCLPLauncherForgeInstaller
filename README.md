@@ -1,2 +1,2 @@
-# LauncherLogicForgeInstaller
-Forge installer for <a href="https://github.com/LCLPYT/LauncherLogic">LauncherLogic</a>.
+# LCLPLauncherForgeInstaller
+Forge installer for <a href="https://github.com/LCLPYT/LCLPLauncher">LCLPLauncher</a>.

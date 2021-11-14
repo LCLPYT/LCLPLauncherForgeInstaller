@@ -1,35 +1,25 @@
 package work.lclpnet.forgeinstaller;
 
+import net.minecraftforge.installer.SimpleInstaller;
 import net.minecraftforge.installer.actions.ActionCanceledException;
 import net.minecraftforge.installer.actions.ClientInstall;
 import net.minecraftforge.installer.actions.ProgressCallback;
 import net.minecraftforge.installer.json.Util;
 
 import java.io.*;
+import java.net.URISyntaxException;
 import java.util.Locale;
 
 public class ForgeInstaller {
 
     public static void main(String[] args) {
-        if (args.length != 2) {
-            System.err.println("You need to pass exactly 2 arguments: <host> <port>");
-            System.exit(1);
-        }
-        String host = args[0];
-        int port = Integer.parseInt(args[1]);
-        ProgressCallbackClient pgClient;
-        pgClient = new ProgressCallbackClient(host, port);
-        pgClient.setClientName("forgeInstaller");
-
-		File tempDir = new File(System.getProperty("java.io.tmpdir"), "launcherlogic_forge");
+		File tempDir = new File(System.getProperty("java.io.tmpdir"), "lclplauncher_forge");
 		if(!tempDir.exists() && !tempDir.mkdirs()) throw new IllegalStateException("Could not create temp directory.");
 		File logFile = new File(tempDir, String.format("llforgei_%s_stdout.txt", System.currentTimeMillis() / 1000L));
 		File errFile = new File(tempDir, String.format("llforgei_%s_stderr.txt", System.currentTimeMillis() / 1000L));
 		
-		String logMsg = "Writing logs to: " + tempDir.getAbsolutePath();
-		System.out.println(logMsg);
-		pgClient.send(logMsg);
-		
+		System.out.println("Writing logs to: " + tempDir.getAbsolutePath());
+
 		FileOutputStream outOut, outErr;
 		try {
 			outOut = new FileOutputStream(logFile);
@@ -41,30 +31,34 @@ public class ForgeInstaller {
 		}
         
 		PrintStream origOut = System.out, origErr = System.err;
-        LoggingPrintStream interceptor = new LoggingPrintStream(origOut, outOut, pgClient);
+        LoggingPrintStream interceptor = new LoggingPrintStream(origOut, outOut);
 		System.setOut(interceptor);
-        System.setErr(new LoggingPrintStream(origErr, outErr, pgClient));
+        System.setErr(new LoggingPrintStream(origErr, outErr));
 
         ClientInstall install = new ClientInstall(Util.loadInstallProfile(), ProgressCallback.withOutputs(interceptor));
 
+        File installer = null;
         try {
-            install.run(getMCDir(), input -> true);
+            installer = new File(SimpleInstaller.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            System.exit(1);
+            return;
+        }
+
+        if (installer.getAbsolutePath().contains("!/")) {
+            System.err.println("Due to java limitation, please do not run this jar in a folder ending with !");
+            System.exit(1);
+            return;
+        }
+
+        try {
+            install.run(getMCDir(), input -> true, installer);
         } catch (ActionCanceledException e) {
             e.printStackTrace();
             System.exit(1);
         }
 
-        System.out.println(install.getSuccessMessage());
-
-        if (ProgressCallbackClient.hasOpenSockets()) {
-            try {
-                Thread.sleep(1000L); // Delay to send potential pending tcp stuff (is this necessary?)
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            ProgressCallbackClient.closeAllSockets();
-        }
-        
 		try {
 			outOut.close();
 			outErr.close();

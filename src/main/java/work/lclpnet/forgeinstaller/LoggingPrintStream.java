@@ -10,12 +10,10 @@ public class LoggingPrintStream extends PrintStream {
 
 	public static PrintStream origErr = null;
 	protected OutputStream loggingStream;
-	protected ProgressCallbackClient pgClient;
 
-	public LoggingPrintStream(OutputStream out, OutputStream loggingStream, ProgressCallbackClient pgClient) {
+	public LoggingPrintStream(OutputStream out, OutputStream loggingStream) {
 		super(out, true);
 		this.loggingStream = loggingStream;
-		this.pgClient = pgClient;
 	}
 
 	protected void newLine() {
@@ -76,7 +74,6 @@ public class LoggingPrintStream extends PrintStream {
 	public void print(String s) {
 		super.print(s);
 		writeString(s);
-		if(pgClient != null) pgClient.send(s);
 	}
 
 	@Override
@@ -192,7 +189,6 @@ public class LoggingPrintStream extends PrintStream {
 		super.write(b);
 		String s = new String(b);
 		writeString(s);
-		if(pgClient != null) pgClient.send(s);
 	}
 
 }
